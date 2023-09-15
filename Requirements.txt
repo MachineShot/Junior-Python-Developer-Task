@@ -1,1 +1,1 @@
-Packages: requests, pytest
+Packages: requests, pytest, requests-mock
