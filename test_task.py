@@ -51,9 +51,9 @@ def test_fetch_data_comments_success():
 
 def test_fetch_data_failed():
     # Create a requests_mock object
-    with requests_mock.Mocker() as mocker:
+    with requests_mock.Mocker() as m:
         # Mock a failed API response
-        mocker.get("https://jsonplaceholder.typicode.com/posts", status_code=404)
+        m.get("https://jsonplaceholder.typicode.com/posts", status_code=404)
 
         # Call the fetch_data function
         result = fetch_data("/posts")
@@ -62,9 +62,29 @@ def test_fetch_data_failed():
         assert result is None
 
 
+# Mock a response with invalid JSON data
+def test_fetch_data_json_decode_error():
+    with requests_mock.Mocker() as m:
+        # Mock a response with invalid JSON data
+        m.get(
+            "https://jsonplaceholder.typicode.com/posts", text="Invalid JSON Response"
+        )
+
+        try:
+            # Call the fetch_data function, which should raise JSONDecodeError
+            fetch_data("/posts")
+        except json.decoder.JSONDecodeError as e:
+            # Assert that the exception message matches expected error message
+            assert str(e) == "Expecting value: line 1 column 1 (char 0)"
+
+
 def test_merge_posts_and_comments():
     # Mock data for posts and comments
-    posts = [{"id": 1, "title": "Mock Post 1"}, {"id": 2, "title": "Mock Post 2"}]
+    posts = [
+        {"id": 1, "title": "Mock Post 1"},
+        {"id": 2, "title": "Mock Post 2"},
+        {"id": 3, "title": "Mock Post 3"},
+    ]
     comments = [
         {"postId": 1, "text": "Mock Comment 1"},
         {"postId": 2, "text": "Mock Comment 2"},
@@ -76,6 +96,7 @@ def test_merge_posts_and_comments():
     # Assert that each post includes its comments
     assert merged_data[0]["comments"] == [{"postId": 1, "text": "Mock Comment 1"}]
     assert merged_data[1]["comments"] == [{"postId": 2, "text": "Mock Comment 2"}]
+    assert merged_data[2]["comments"] == []
 
 
 def test_print_data(capfd):

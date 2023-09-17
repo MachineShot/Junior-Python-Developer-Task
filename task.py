@@ -58,16 +58,6 @@ def main():
             print("Printing posts + comments:")
             print_data(merged_data)
 
-            # TESTING
-            """ 
-            with open("posts.json", "w") as outfile:
-                json.dump(posts, outfile)
-            with open("comments.json", "w") as outfile:
-                json.dump(comments, outfile)
-            with open("merged.json", "w") as outfile:
-                json.dump(merged_data, outfile) 
-            """
-
             # Sleep for 30 seconds before making next request
             print("Use Ctrl+C to EXIT")
             time.sleep(30)
